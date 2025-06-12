@@ -52,13 +52,12 @@ def segment_manifest(manifest_path: str, output_dir: str, align_models):
                 continue
             path, speaker, default_code, text, lang = parts
             if lang not in align_models:
-              print("here")
               continue
 
             # Load and duration
             audio = AudioSegment.from_wav(path)
             duration = len(audio) / 1000.0
-
+            print(duration)
             # Align full segment
             segments = [{'text': text, 'start': 0.0, 'end': duration}]
             model_a, metadata = align_models[lang]
@@ -88,6 +87,7 @@ def segment_manifest(manifest_path: str, output_dir: str, align_models):
             for idx, chunk in enumerate(chunks, start=1):
                 start, end = chunk[0]['start'], chunk[-1]['end']
                 clip = audio[int(start * 1000):int(end * 1000)]
+                clip = clip.set_frame_rate(44100)
                 fname = f"{base_name}_seg_{idx:03d}.wav"
                 out_path = os.path.join(segment_dir, fname)
                 clip.export(out_path, format='wav')
