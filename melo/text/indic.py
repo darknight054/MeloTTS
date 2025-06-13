@@ -3,55 +3,20 @@ from functools import cache
 from transformers import AutoTokenizer
 import phonemizer
 from phonemizer.separator import Separator
+from whisper_normalizer.indic_normalizer import (HindiNormalizer, BengaliNormalizer, GujaratiNormalizer,
+KannadaNormalizer, DevanagariNormalizer, MalayalamNormalizer, PunjabiNormalizer, TamilNormalizer )
 
 model_id = os.environ.get('MODEL_ID', 'google/muril-base-cased')
 normalizer_map = {
-    # Assamese
-    "asm_Beng": "BengaliNormalizer",
-    # Bangla
-    "ben_Beng": "BengaliNormalizer",
-
-    # Bodo
-    "brx_Deva": "DevanagariNormalizer",
-
-    # Dogri
-    "doi_Deva": "DevanagariNormalizer",
-
-    # Gujarati
-    "guj_Gujr": "GujaratiNormalizer",
-
-    # Hindi
-    "hin_Deva": "HindiNormalizer",
-
-    # Kannada
-    "kan_Knda": "KannadaNormalizer",
-    "kas_Deva": "DevanagariNormalizer",
-
-    # Konkani
-    "kok_Deva": "DevanagariNormalizer",
-
-    # Maithili
-    "mai_Deva": "DevanagariNormalizer",
-
-    # Malayalam
-    "mal_Mlym": "MalayalamNormalizer",
-
-    # Manipuri
-    "mni_Beng": "BengaliNormalizer",
-
-    # Marathi
-    "mar_Deva": "DevanagariNormalizer",
-
-    # Nepali
-    "nep_Deva": "DevanagariNormalizer",
-
-    # Punjabi
-    "pan_Guru": "PunjabiNormalizer",
-
-    # Tamil
-    "tam_Tamil": "TamilNormalizer",
-    # Telugu
-    "tel_Telu": "TeluguNormalizer",
+    "bn": BengaliNormalizer(tts_mode=True),
+    "gu": GujaratiNormalizer(tts_mode=True),
+    "hi": HindiNormalizer(tts_mode=True),
+    "kn": KannadaNormalizer(tts_mode=True),
+    "ml": MalayalamNormalizer(tts_mode=True),
+    "mr": DevanagariNormalizer(tts_mode=True), # Marathi
+    "pa": PunjabiNormalizer(tts_mode=True),
+    "ta": TamilNormalizer(tts_mode=True),
+    "te": TeluguNormalizer(tts_mode=True)
 }
 
 def distribute_phone(n_phone, n_word):
@@ -68,22 +33,20 @@ def get_tokenizer():
     return tokenizer
 
 @cache
-def get_normalizer():
-    normalizer = load_text_ids(pad_to = None, understand_punct = True, is_lower = False)
+def get_normalizer(language):
+    normalizer = normalizer_map.get(language)
     return normalizer
 
 @cache
-def get_phonemizer():
-
-    global_phonemizer = phonemizer.backend.EspeakBackend(language='hi', preserve_punctuation=True,  with_stress=True)
+def get_phonemizer(language):
+    global_phonemizer = phonemizer.backend.EspeakBackend(language=language, preserve_punctuation=True,  with_stress=True)
     separator = Separator(phone='-', word='|')
 
     return global_phonemizer, separator
 
-def text_normalize(text):
-    normalizer = get_normalizer()
-    t, ids = normalizer.normalize(text, add_fullstop = True)
-    return t
+def text_normalize(text, language):
+    normalizer = get_normalizer(language)
+    return normalizer(text)
 
 def g2p(text, pad_start_end=True, tokenized=None):
     global_phonemizer, separator = get_phonemizer()

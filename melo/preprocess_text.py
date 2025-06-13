@@ -51,8 +51,8 @@ def main(
         new_symbols = []
         for line in tqdm(open(metadata, encoding="utf-8").readlines()):
             try:
-                utt, spk, language, text = line.strip().split("|")
-                norm_text, phones, tones, word2ph, bert = clean_text_bert(text, language, device='cuda:0')
+                utt, spk, language, text, audio_lang = line.strip().split("|")
+                norm_text, phones, tones, word2ph, bert = clean_text_bert(text, language, audio_lang ,device='cuda:0')
                 for ph in phones:
                     if ph not in symbols and ph not in new_symbols:
                         new_symbols.append(ph)

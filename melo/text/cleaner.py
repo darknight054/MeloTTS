@@ -1,9 +1,9 @@
-from . import chinese, japanese, english, chinese_mix, korean, french, spanish
+from . import chinese, japanese, english, chinese_mix, korean, french, spanish, indic
 from . import cleaned_text_to_sequence
 import copy
 
 language_module_map = {"ZH": chinese, "JP": japanese, "EN": english, 'ZH_MIX_EN': chinese_mix, 'KR': korean,
-                    'FR': french, 'SP': spanish, 'ES': spanish}
+                    'FR': french, 'SP': spanish, 'ES': spanish, 'IN': indic}
 
 
 def clean_text(text, language):
@@ -13,9 +13,12 @@ def clean_text(text, language):
     return norm_text, phones, tones, word2ph
 
 
-def clean_text_bert(text, language, device=None):
+def clean_text_bert(text, language, audio_language ,device=None):
     language_module = language_module_map[language]
-    norm_text = language_module.text_normalize(text)
+    if language == "IN":
+        norm_text = language_module.text_normalize(text, audio_language)
+    else:
+        norm_text = language_module.text_normalize(text)
     phones, tones, word2ph = language_module.g2p(norm_text)
     
     word2ph_bak = copy.deepcopy(word2ph)
