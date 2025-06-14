@@ -6,16 +6,19 @@ language_module_map = {"ZH": chinese, "JP": japanese, "EN": english, 'ZH_MIX_EN'
                     'FR': french, 'SP': spanish, 'ES': spanish, 'IN': indic}
 
 
-def clean_text(text, language):
+def clean_text(text, language, audio_language=None):
     language_module = language_module_map[language]
-    norm_text = language_module.text_normalize(text)
+    if language == "IN" and audio_language:
+        norm_text = language_module.text_normalize(text, audio_language)
+    else:
+        norm_text = language_module.text_normalize(text)
     phones, tones, word2ph = language_module.g2p(norm_text)
     return norm_text, phones, tones, word2ph
 
 
-def clean_text_bert(text, language, audio_language ,device=None):
+def clean_text_bert(text, language, audio_language = None ,device=None):
     language_module = language_module_map[language]
-    if language == "IN":
+    if language == "IN" and audio_language:
         norm_text = language_module.text_normalize(text, audio_language)
     else:
         norm_text = language_module.text_normalize(text)

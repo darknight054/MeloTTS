@@ -818,7 +818,7 @@ class SynthesizerTrn(nn.Module):
         else:
             self.enc_gin_channels = 0
         self.enc_p = TextEncoder(
-            n_vocab,
+            n_vocab if is_eval else 219,
             inter_channels,
             hidden_channels,
             filter_channels,
@@ -828,7 +828,7 @@ class SynthesizerTrn(nn.Module):
             p_dropout,
             gin_channels=self.enc_gin_channels,
             num_languages=num_languages,
-            num_tones=num_tones,
+            num_tones=num_tones if is_eval else 16,
         )
         self.dec = Generator(
             inter_channels,
