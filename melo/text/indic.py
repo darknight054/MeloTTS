@@ -3,8 +3,8 @@ from functools import cache
 from transformers import AutoTokenizer
 import phonemizer
 from phonemizer.separator import Separator
-from whisper_normalizer.indic_normalizer import (HindiNormalizer, BengaliNormalizer, GujaratiNormalizer,
-KannadaNormalizer, DevanagariNormalizer, MalayalamNormalizer, PunjabiNormalizer, TamilNormalizer )
+from whisper_normalizer.indic import (HindiNormalizer, BengaliNormalizer, GujaratiNormalizer,
+KannadaNormalizer, DevanagariNormalizer, MalayalamNormalizer, PunjabiNormalizer, TamilNormalizer, TeluguNormalizer )
 
 model_id = os.environ.get('MODEL_ID', 'google/muril-base-cased')
 normalizer_map = {
@@ -13,7 +13,7 @@ normalizer_map = {
     "hi": HindiNormalizer(tts_mode=True),
     "kn": KannadaNormalizer(tts_mode=True),
     "ml": MalayalamNormalizer(tts_mode=True),
-    "mr": DevanagariNormalizer(tts_mode=True), # Marathi
+    "mr": DevanagariNormalizer(), # Marathi
     "pa": PunjabiNormalizer(tts_mode=True),
     "ta": TamilNormalizer(tts_mode=True),
     "te": TeluguNormalizer(tts_mode=True)
@@ -48,8 +48,8 @@ def text_normalize(text, language):
     normalizer = get_normalizer(language)
     return normalizer(text)
 
-def g2p(text, pad_start_end=True, tokenized=None):
-    global_phonemizer, separator = get_phonemizer()
+def g2p(text, language, pad_start_end=True, tokenized=None):
+    global_phonemizer, separator = get_phonemizer(language)
     if tokenized is None:
         tokenizer = get_tokenizer()
         tokenized = tokenizer.tokenize(text)

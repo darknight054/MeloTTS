@@ -1,19 +1,26 @@
+#!/usr/bin/env bash
 CONFIG=$1
 GPUS=$2
-MODEL_NAME=$(basename "$(dirname $CONFIG)")
-
+MODEL_NAME=$(basename "$(dirname "$CONFIG")")
 PORT=10902
+echo $MODEL_NAME
+while :; do
+  torchrun \
+    --nproc_per_node=$GPUS \
+    --master_port=$PORT \
+    train.py --c "$CONFIG" --model "$MODEL_NAME"
+  EXIT_CODE=$?
 
-while : # auto-resume: the code sometimes crash due to bug of gloo on some gpus
-do
-torchrun --nproc_per_node=$GPUS \
-        --master_port=$PORT \
-    train.py --c $CONFIG --model $MODEL_NAME 
-
-for PID in $(ps -aux | grep $CONFIG | grep python | awk '{print $2}')
-do
-    echo $PID
-    kill -9 $PID
-done
-sleep 30
+  if [ $EXIT_CODE -eq 0 ]; then
+    echo "✅ Training finished successfully—exiting loop."
+    break
+  else
+    echo "⚠️  Crashed with exit code $EXIT_CODE. Cleaning up and retrying in 30s…"
+    # kill any stray processes
+    for PID in $(pgrep -f "python.*$CONFIG"); do
+      echo "Killing stray PID $PID"
+      kill -9 $PID
+    done
+    sleep 30
+  fi
 done

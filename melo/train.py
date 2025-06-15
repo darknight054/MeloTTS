@@ -46,7 +46,7 @@ torch.backends.cuda.enable_math_sdp(True)
 global_step = 0
 
 
-def run():
+def run():        
     hps = utils.get_hparams()
     local_rank = int(os.environ["LOCAL_RANK"])
     dist.init_process_group(
@@ -78,7 +78,7 @@ def run():
     collate_fn = TextAudioSpeakerCollate()
     train_loader = DataLoader(
         train_dataset,
-        num_workers=16,
+        num_workers=1,
         shuffle=False,
         pin_memory=True,
         collate_fn=collate_fn,

@@ -28,8 +28,9 @@ def segment_manifest(manifest_path: str, output_dir: str, align_models):
     Outputs clips to preprocessed-segment-data/ and writes manifest-segment.list.
     """
     # Prepare directories
+    args.output_dir = os.path.abspath(output_dir)
     os.makedirs(output_dir, exist_ok=True)
-    segment_dir = os.path.join(output_dir, 'preprocessed-segment-data')
+    segment_dir = os.path.join(args.output_dir)
     # Clear or create segment directory
     if os.path.isdir(segment_dir):
         # Remove old contents

@@ -20,9 +20,10 @@ def clean_text_bert(text, language, audio_language = None ,device=None):
     language_module = language_module_map[language]
     if language == "IN" and audio_language:
         norm_text = language_module.text_normalize(text, audio_language)
+        phones, tones, word2ph = language_module.g2p(norm_text, audio_language)
     else:
         norm_text = language_module.text_normalize(text)
-    phones, tones, word2ph = language_module.g2p(norm_text)
+        phones, tones, word2ph = language_module.g2p(norm_text)
     
     word2ph_bak = copy.deepcopy(word2ph)
     for i in range(len(word2ph)):

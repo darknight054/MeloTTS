@@ -357,10 +357,10 @@ te_symbols = [
     "ం", "ః", "్"
 ]
 num_te_tones = 1
-
+extra_symbols = ['ɖ', 'ˈiː', 'ɟ', 'eː', 'ˌeː', 'ʋ', 'pʰ', 'ˈɔ', 'ˈaː', 'ˈã', 'ˈeː', 'ɡʰ', 'ˈʌ', 'ˈẽː', 'ˈɛː', 'aː', 'ˈʊ', 'r.', 'ˌaː', 'ˈɪ', 'ˈoː', 'tʰ', 'ʈʰ', 'ˈuː', 'cʰ', 'ʈ', '(en)', 'ˈaɪ', '(hi)', 'ˈi', 'ɟʰ', 'ˌi', 'ˌə', 'ˌõ', 'õ', 'bʰ', 'oː', 'ɛː', 'ˌɪ', 'ĩ', 'ɛ̃', 'ˈũ', 'ɔː', 'kʰ', 'ˌʊ', 'ẽː', 'ã', 'dʰ', 'ˈɑː', 'tʃ', 'ˈeɪ', 'ˈɒ', 'əʊ', 'aɪ', 'dʒ', 'ˈa', 'ˌaɪ', 'ɳ', 'ɖʰ', 'ˈĩ', 'tː', 'ˈu', 'ˈɔː', 'ʂ', 'ˌʌ', 'ˌoː', 'ˈə', 'kː', 'uː', 'ˈõ', 'pː', 'ˌã', 'ˌu', 'ˌuː', 'ũ', 'ˌĩ', 'ˌɛ', 'ˌẽː', 'cː', 'dʰː', 'ɟː', 'cʰː', 'ˌa', 'ˈe', 'ˌɛː', 'tʰː', 'ˈɛ̃', 'iː', 'ˌɒ', 'ˈəʊ', 'ˈiə', 'ˌiː', 'ˌũ', 'ˈɛ', 'dː', 'ˈɔ̃', 'ʈː', 'eɪ', 'əl', 'iə', 'ˌɑː', 'ɑː', 'ʈʰː', 'ˈɜː', 'ˈeə', 'ˌəʊ', 'ɖː', 'ɖʰː']
 # combine all symbols
-normal_symbols = sorted(set(zh_symbols + ja_symbols + en_symbols + kr_symbols + es_symbols + fr_symbols + de_symbols + ru_symbols + hi_symbols)) # add support for other languages (only hindi right now)
-symbols = [pad] + normal_symbols + pu_symbols
+normal_symbols = sorted(set(zh_symbols + ja_symbols + en_symbols + kr_symbols + es_symbols + fr_symbols + de_symbols + ru_symbols)) # add support for other languages (only hindi right now)
+symbols = [pad] + normal_symbols + pu_symbols + hi_symbols + extra_symbols
 sil_phonemes_ids = [symbols.index(i) for i in pu_symbols]
 
 # combine all tones

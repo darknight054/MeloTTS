@@ -64,4 +64,5 @@ def load_or_download_model(locale, device, use_hf=True, ckpt_path=None):
     return torch.load(ckpt_path, map_location=device)
 
 def load_pretrain_model():
+    # return [None for url in PRETRAINED_MODELS.values()]
     return [cached_path(url) for url in PRETRAINED_MODELS.values()]

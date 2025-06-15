@@ -783,6 +783,7 @@ class SynthesizerTrn(nn.Module):
         num_languages=None,
         num_tones=None,
         norm_refenc=False,
+        is_eval=False,
         **kwargs
     ):
         super().__init__()
@@ -1019,6 +1020,23 @@ class SynthesizerTrn(nn.Module):
         o = self.dec((z * y_mask)[:, :, :max_len], g=g)
         # print('max/min of o:', o.max(), o.min())
         return o, attn, y_mask, (z, z_p, m_p, logs_p)
+    
+    def get_resized_embeddings(self, old_embeddings, new_num_tokens):
+        old_num_tokens, old_embedding_dim = old_embeddings.weight.size()
+        if old_num_tokens == new_num_tokens:
+            return old_embeddings
+
+        if not isinstance(old_embeddings, nn.Embedding):
+            raise TypeError(
+                f"Old embeddings are of type {type(old_embeddings)}, which is not an instance of {nn.Embedding}. "
+                f"You should either use a different resize function or make sure that `old_embeddings` are an instance of {nn.Embedding}."
+            )
+
+        new_embeddings = nn.Embedding(new_num_tokens, old_embedding_dim).to(
+            device=old_embeddings.weight.device, dtype=old_embeddings.weight.dtype)
+        new_embeddings.weight.data[:old_num_tokens, :] = old_embeddings.weight.data[:old_num_tokens, :]
+        
+        return new_embeddings
 
     def voice_conversion(self, y, y_lengths, sid_src, sid_tgt, tau=1.0):        
         g_src = sid_src

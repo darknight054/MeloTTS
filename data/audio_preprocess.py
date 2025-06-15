@@ -64,6 +64,7 @@ def count_punct(text: str) -> int:
 
 
 def main(args):
+    args.output_dir = os.path.abspath(args.output_dir)
     os.makedirs(args.output_dir, exist_ok=True)
     temp_dir = os.path.join(args.output_dir, 'temp')
     os.makedirs(temp_dir, exist_ok=True)
@@ -111,7 +112,9 @@ def main(args):
 
         if args.download_audio:
             try:
+                print("Downloading audio from:", url)
                 download_audio(url, src)
+                print("Downloading audio completed for:", url)
                 convert_to_wav(src, os.path.join(args.output_dir, wav_name))
             except Exception as e:
                 print(f"Error processing {url}: {e}")
@@ -120,7 +123,7 @@ def main(args):
             wav_path = os.path.join(args.output_dir, wav_name)
             audio = whisperx.load_audio(wav_path)
             detected = MODEL.detect_language(audio)
-            code = detected.get('language', args.language)
+            code = detected
             # Map to fields and folder
             speaker, lang_code = DEFAULT_SPEAKER_MAP.get(code, (args.speaker, args.language))
             out_dir = os.path.join(args.output_dir, code)
